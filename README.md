@@ -1,0 +1,2 @@
+This file 'should' take any file, read the format of the file, create a data frame, wrangle the data frame such that the index is the balance sheet and income statement items, then perform basic financial accounting ratios on the items on both sheets. afterward the program will add the ratios to a dictionary and publish a series for review. 
+Fingers Crossed. The csv documents used to intitially model the program were obtained from [financialmodelingprep.com](https://site.financialmodelingprep.com/)https://site.financialmodelingprep.com/
