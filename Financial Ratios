@@ -6,7 +6,7 @@ csv=re.compile(r'.csv')
 html=re.compile(r'.html')
 xls=re.compile(r'.xls[x]?')
 json=re.compile(r'.json')
-i="amzn_income_statement_annual.csv"
+i=input('Income Statement CSV,HTML,EXCEL,JSON')
 for j in i:
     if len(re.findall(html,i))==1:
         Income=pd.read_html(i)
@@ -19,14 +19,14 @@ for j in i:
     else:
         print('you entered an incompatible file')
         
-Income = Income[Income.isnull().sum(axis=1) <= max_nan_row]
-Income = Income.loc[:, Income.isnull().sum() <= max_nan_col]
+Income = Income[Income.isnull().sum(axis=1) <= 1]
+Income = Income.loc[:, Income.isnull().sum() <= 1]
 for column in Income.columns:
     if Income[column].apply(lambda x: str(x).isalpha()).all():
         Income.set_index(column, inplace=True)        
 Income.index = Income.index.str.upper().str.replace(r'[\s\-_^\W]+', '')  
 
-inp="amzn_balance_sheet_statement_annual.csv"
+inp=input('Balance Sheet CSV,HTML,EXCEL,JSON')
 for j in inp:
     if len(re.findall(html,inp))==1:
         Balance=pd.read_html(inp)
@@ -39,8 +39,8 @@ for j in inp:
     else:
         print('you entered an incompatible file')
         
-Balance = Balance[Balance.isnull().sum(axis=1) <= max_nan_row]
-Balance = Balance.loc[:, Balance.isnull().sum() <= max_nan_col]
+Balance = Balance[Balance.isnull().sum(axis=1) <= 1]
+Balance = Balance.loc[:, Balance.isnull().sum() <= 1]
 for column in Balance.columns:
     if Balance[column].apply(lambda x: str(x).isalpha()).all():
         Balance.set_index(column, inplace=True)
