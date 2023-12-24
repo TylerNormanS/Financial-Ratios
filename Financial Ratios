@@ -80,14 +80,16 @@ DtARat=(list(Balance.loc['TOTALLIABILITIES'])[0]/list(Balance.loc['TOTALASSETS']
 TimesIntEarned=(EBITDA[0]-Depreciation[0])/InterestExp[0]
 BVpCS=((list(Balance.loc['TOTALASSETS']))[0])-(list(Balance.loc['TOTALLIABILITIES'])[0])/(sum(SharesPlus)/len(SharesPlus))
 
-print('Current Ratio:',Current_Ratio,
-      'Net Margin:',Net_Margin,
-      'Return on Invenstment:',ROI, 
-      'Return on Equity:', ROE, 
-      "Earnings per Share:", EPS, 
-      "Working Capital:",WorkingCapital,
-      'Acid Test', Quick_Ratio, 
-      'Inventory Turnover', Inventory_Turnover, 
-      "Debt to Assets", DtARat,
-      'Times interest earned', TimesIntEarned,
-      'Book Value per Common Share:', BVpCS)
+dictionary={'Current Ratio':Current_Ratio,
+      'Net Margin':Net_Margin,
+      'Return on Invenstment':ROI, 
+      'Return on Equity': ROE, 
+      "Earnings per Share": EPS, 
+      "Working Capital": WorkingCapital,
+      'Acid Test': Quick_Ratio, 
+      'Inventory Turnover': Inventory_Turnover, 
+      "Debt to Assets": DtARat,
+      'Times interest earned': TimesIntEarned,
+      'Book Value per Common Share': BVpCS}
+wedun=pd.Series(dictionary)
+wedun
