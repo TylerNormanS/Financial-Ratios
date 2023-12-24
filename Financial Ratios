@@ -1,0 +1,93 @@
+import pandas as pd
+import regex as re
+import numpy as np
+import numpy.ma as ma
+csv=re.compile(r'.csv')
+html=re.compile(r'.html')
+xls=re.compile(r'.xls[x]?')
+json=re.compile(r'.json')
+i="amzn_income_statement_annual.csv"
+for j in i:
+    if len(re.findall(html,i))==1:
+        Income=pd.read_html(i)
+    elif len(re.findall(csv,i))==1:
+        Income=pd.read_csv(i)
+    elif len(re.findall(xls,i))==1:
+        Income=pd.read_excel(i)
+    elif len(re.findall(json,i))==1:
+        Income=pd.read_json(i)
+    else:
+        print('you entered an incompatible file')
+        
+Income = Income[Income.isnull().sum(axis=1) <= max_nan_row]
+Income = Income.loc[:, Income.isnull().sum() <= max_nan_col]
+for column in Income.columns:
+    if Income[column].apply(lambda x: str(x).isalpha()).all():
+        Income.set_index(column, inplace=True)        
+Income.index = Income.index.str.upper().str.replace(r'[\s\-_^\W]+', '')  
+
+inp="amzn_balance_sheet_statement_annual.csv"
+for j in inp:
+    if len(re.findall(html,inp))==1:
+        Balance=pd.read_html(inp)
+    elif len(re.findall(csv,inp))==1:
+        Balance=pd.read_csv(inp)
+    elif len(re.findall(xls,inp))==1:
+        Balance=pd.read_excel(inp)
+    elif len(re.findall(json,inp))==1:
+        Balance=pd.read_json(inp)
+    else:
+        print('you entered an incompatible file')
+        
+Balance = Balance[Balance.isnull().sum(axis=1) <= max_nan_row]
+Balance = Balance.loc[:, Balance.isnull().sum() <= max_nan_col]
+for column in Balance.columns:
+    if Balance[column].apply(lambda x: str(x).isalpha()).all():
+        Balance.set_index(column, inplace=True)
+Balance.index = Balance.index.str.upper().str.replace(r'[\s\-_^\W]+', '')
+
+AvgTA=sum(list(Balance.loc['TOTALASSETS'])) / len(list(Balance.loc['TOTALASSETS']))
+AvgTL=sum(list(Balance.loc['TOTALLIABILITIES'])) / len(list(Balance.loc['TOTALLIABILITIES']))
+CurrentAssets=list(Balance.loc['TOTALCURRENTASSETS'])
+CurrentLiabilities=list(Balance.loc['TOTALCURRENTLIABILITIES'])
+AvgTSE=AvgTA-AvgTL
+EPS=list((Income.loc['EPS']))
+Retained_Earnings=list((Balance.loc['RETAINEDEARNINGS']))
+Number_of_Shares=[a/b for a,b in zip(Retained_Earnings, EPS)]
+SharesPlus=[abs(x) for x in Number_of_Shares]
+AvgDailyOpCost=sum(list(Income.loc['OPERATINGEXPENSES'])) / len(list(Income.loc['OPERATINGEXPENSES']))
+LTDebt=list((Balance.loc['LONGTERMDEBT']))
+EBITDA=list((Income.loc['EBITDA']))
+Depreciation=list((Income.loc['DEPRECIATIONANDAMORTIZATION']))
+InterestExp=list((Income.loc['INTERESTEXPENSE']))
+COGS=list((Income.loc['COSTOFREVENUE']))
+Sales=list((Income.loc['REVENUE']))
+Accounts_Receivable=list((Balance.loc['NETRECEIVABLES']))
+Fixed_Assets=list((Balance.loc['PROPERTYPLANTEQUIPMENTNET']))
+NetFixed=Fixed_Assets[1]-Fixed_Assets[0]
+NetIncome=list((Income.loc['NETINCOME']))
+Inventory=list(Balance.loc['INVENTORY'])
+#Ratios
+Current_Ratio=CurrentAssets[0]/CurrentLiabilities[0]
+Net_Margin=NetIncome[0]/(Sales[0]-COGS[0])
+ROI=NetIncome[0]/AvgTA
+ROE=NetIncome[0]/AvgTSE
+EPS=EPS[0]
+WorkingCapital=CurrentAssets[0]-CurrentLiabilities[0]
+Quick_Ratio=(CurrentAssets[0]-Inventory[0])/CurrentLiabilities[0]
+Inventory_Turnover=COGS[0]/(sum(Inventory)/len(Inventory))
+DtARat=(list(Balance.loc['TOTALLIABILITIES'])[0]/list(Balance.loc['TOTALASSETS'])[0])
+TimesIntEarned=(EBITDA[0]-Depreciation[0])/InterestExp[0]
+BVpCS=((list(Balance.loc['TOTALASSETS']))[0])-(list(Balance.loc['TOTALLIABILITIES'])[0])/(sum(SharesPlus)/len(SharesPlus))
+
+print('Current Ratio:',Current_Ratio,
+      'Net Margin:',Net_Margin,
+      'Return on Invenstment:',ROI, 
+      'Return on Equity:', ROE, 
+      "Earnings per Share:", EPS, 
+      "Working Capital:",WorkingCapital,
+      'Acid Test', Quick_Ratio, 
+      'Inventory Turnover', Inventory_Turnover, 
+      "Debt to Assets", DtARat,
+      'Times interest earned', TimesIntEarned,
+      'Book Value per Common Share:', BVpCS)
